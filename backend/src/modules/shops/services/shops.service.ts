@@ -164,4 +164,48 @@ export class ShopService {
       orderBy: { createdAt: 'desc' },
     });
   }
+  // Get all shops (public, paginated)
+  async getAllShops(params: { page?: number; limit?: number; search?: string; verified?: boolean }) {
+    const page = params.page || 1;
+    const limit = params.limit || 10;
+    const skip = (page - 1) * limit;
+
+    const where: any = { status: ShopStatus.ACTIVE };
+
+    if (params.search) {
+      where.OR = [
+        { name: { contains: params.search, mode: 'insensitive' } },
+        { city: { contains: params.search, mode: 'insensitive' } },
+      ];
+    }
+
+    if (params.verified !== undefined) {
+      where.isVerified = params.verified;
+    }
+
+    const [shops, total] = await prisma.$transaction([
+      prisma.shop.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          _count: {
+            select: { products: true, reviews: true }
+          }
+        }
+      }),
+      prisma.shop.count({ where })
+    ]);
+
+    return {
+      data: shops,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      }
+    };
+  }
 }

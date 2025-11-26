@@ -51,6 +51,29 @@ export class ShopController {
     }
   }
 
+  // GET /api/v1/shops
+  async getAllShops(req: Request, res: Response) {
+    try {
+      const page = Number(req.query.page) || 1;
+      const limit = Number(req.query.limit) || 10;
+      const search = req.query.search as string;
+      const verified = req.query.verified === 'true';
+
+      const result = await shopService.getAllShops({ page, limit, search, verified });
+
+      res.status(200).json({
+        success: true,
+        data: result.data,
+        meta: result.meta
+      });
+    } catch (error: any) {
+      res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
+
   // GET /api/v1/shops/nearby
   async getNearbyShops(req: Request, res: Response) {
     try {

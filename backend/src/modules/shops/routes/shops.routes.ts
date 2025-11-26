@@ -7,6 +7,8 @@ const router = Router();
 const shopController = new ShopController();
 
 // Public routes
+// Public routes
+router.get('/', (req, res) => shopController.getAllShops(req, res));
 router.get('/nearby', (req, res) => shopController.getNearbyShops(req, res));
 router.get('/:id', (req, res) => shopController.getShop(req, res));
 
