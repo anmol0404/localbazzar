@@ -17,6 +17,7 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      console.log('Auth Middleware: No token provided', { authHeader });
       return res.status(401).json({ success: false, message: 'No token provided' });
     }
 
@@ -30,6 +31,7 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
     req.user = decoded;
     next();
   } catch (error) {
+    console.error('Auth Middleware: Token verification failed', error);
     return res.status(401).json({ success: false, message: 'Invalid or expired token' });
   }
 };

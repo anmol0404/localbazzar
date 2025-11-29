@@ -5,6 +5,17 @@ import { config } from './config/env.config';
 
 const app: Application = express();
 
+// Handle BigInt serialization
+(BigInt.prototype as any).toJSON = function () {
+  return this.toString();
+};
+
+// Handle Decimal serialization
+import { Decimal } from '@prisma/client/runtime/library';
+(Decimal.prototype as any).toJSON = function () {
+  return this.toString();
+};
+
 // Middleware
 app.use(helmet());
 app.use(cors());
@@ -32,6 +43,8 @@ import notificationRoutes from './routes/notifications.routes';
 import subscriptionRoutes from './routes/subscriptions.routes';
 import financeRoutes from './routes/finance.routes';
 import uploadRoutes from './routes/upload.routes';
+import reportsRoutes from './routes/reports.routes';
+import adminRoutes from './routes/admin.routes';
 import path from 'path';
 
 app.use('/api/v1/auth', authRoutes);
@@ -45,6 +58,8 @@ app.use('/api/v1/notifications', notificationRoutes);
 app.use('/api/v1/subscriptions', subscriptionRoutes);
 app.use('/api/v1/finance', financeRoutes);
 app.use('/api/v1/uploads', uploadRoutes);
+app.use('/api/v1/reports', reportsRoutes);
+app.use('/api/v1/admin', adminRoutes);
 
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
@@ -76,5 +91,9 @@ app.use((req: Request, res: Response) => {
     message: 'Route not found' 
   });
 });
+
+// Global Error Handler
+import { errorHandler } from './middlewares/error.middleware';
+app.use(errorHandler);
 
 export default app;

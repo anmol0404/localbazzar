@@ -89,6 +89,7 @@ export class UserController {
         data: addresses,
       });
     } catch (error: any) {
+      console.error('Error in getAddresses:', error);
       res.status(400).json({
         success: false,
         message: error.message,
@@ -181,6 +182,23 @@ export class UserController {
       });
     } catch (error: any) {
       res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
+  // GET /api/v1/users/:id
+  async getUserById(req: Request, res: Response) {
+    try {
+      const userId = req.params.id;
+      const user = await userService.getUserById(userId);
+      
+      res.status(200).json({
+        success: true,
+        data: user,
+      });
+    } catch (error: any) {
+      res.status(404).json({
         success: false,
         message: error.message,
       });

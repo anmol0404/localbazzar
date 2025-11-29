@@ -11,9 +11,12 @@ const userController = new UserController();
 router.use(authenticate);
 
 // Profile Routes
-router.get('/', (req, res) => userController.getAllUsers(req, res));
+// Profile Routes
 router.get('/profile', (req, res) => userController.getProfile(req, res));
 router.patch('/profile', (req, res) => userController.updateProfile(req, res));
+
+router.get('/', (req, res) => userController.getAllUsers(req, res));
+router.get('/:id', requirePermission(PERMISSIONS.USERS_READ), (req, res) => userController.getUserById(req, res));
 router.patch('/:id/status', requirePermission(PERMISSIONS.USERS_APPROVE), (req, res) => userController.updateUserStatus(req, res));
 
 // Address Routes

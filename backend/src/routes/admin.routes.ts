@@ -1,19 +1,16 @@
 import { Router } from 'express';
-import { NotificationController } from '../controllers/notifications.controller';
+import { AdminController } from '../controllers/admin.controller';
 import { authenticate } from '../middlewares/auth.middleware';
 import { requirePermission } from '../middlewares/rbac.middleware';
 import { PERMISSIONS } from '../config/permissions.config';
 
 const router = Router();
-const notificationController = new NotificationController();
+const adminController = new AdminController();
 
+// All routes require authentication
 router.use(authenticate);
 
-// Notifications
-router.get('/', notificationController.getNotifications);
-router.post('/read', notificationController.markAsRead);
-
-
+// Get Dashboard Stats
+router.get('/stats', requirePermission(PERMISSIONS.SETTINGS_MANAGE), (req, res) => adminController.getStats(req, res));
 
 export default router;
-

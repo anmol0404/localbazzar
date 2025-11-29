@@ -202,16 +202,34 @@ export class OrderService {
       const shops = await prisma.shop.findMany({ where: { ownerId: userId } });
       const shopIds = shops.map((s: { id: string }) => s.id);
       
-      return await prisma.order.findMany({
+      const orders = await prisma.order.findMany({
         where: { shopId: { in: shopIds } },
-        include: { items: true, customer: { select: { fullName: true } } },
+        select: {
+          id: true,
+          status: true,
+          totalAmount: true,
+          createdAt: true,
+          items: true,
+          deliveryAddress: true,
+          customer: { select: { fullName: true, profileImage: true } }
+        },
         orderBy: { createdAt: 'desc' }
       });
+
+      return orders;
     } else {
       // Customer orders
       return await prisma.order.findMany({
         where: { customerId: userId },
-        include: { items: true, shop: { select: { name: true } } },
+        select: {
+          id: true,
+          status: true,
+          totalAmount: true,
+          createdAt: true,
+          items: true,
+          deliveryAddress: true,
+          shop: { select: { name: true, images: true } }
+        },
         orderBy: { createdAt: 'desc' }
       });
     }

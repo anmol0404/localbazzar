@@ -196,6 +196,12 @@ export class ShopService {
         take: limit,
         orderBy: { createdAt: 'desc' },
         include: {
+          owner: {
+            select: {
+              fullName: true,
+              email: true
+            }
+          },
           _count: {
             select: { products: true, reviews: true }
           }

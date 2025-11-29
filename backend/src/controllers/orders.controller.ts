@@ -81,6 +81,7 @@ export class OrderController {
       const orders = await orderService.getOrders(userId, role);
       res.status(200).json({ success: true, data: orders });
     } catch (error: any) {
+      console.error('Error in getOrders:', error);
       res.status(400).json({ success: false, message: error.message });
     }
   }

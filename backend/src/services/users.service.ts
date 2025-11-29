@@ -184,6 +184,18 @@ export class UserService {
     return await prisma.address.findMany({
       where: { userId },
       orderBy: { isDefault: 'desc' },
+      select: {
+        id: true,
+        userId: true,
+        street: true,
+        city: true,
+        state: true,
+        pincode: true,
+        country: true,
+        isDefault: true,
+        createdAt: true,
+        updatedAt: true,
+      }
     });
   }
 
@@ -255,6 +267,40 @@ export class UserService {
         status: true,
       },
     });
+  }
+  // Get user by ID (Admin)
+  async getUserById(userId: string) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        addresses: true,
+        shops: true,
+        orders: {
+          take: 5,
+          orderBy: { createdAt: 'desc' },
+          include: {
+            shop: { select: { name: true } }
+          }
+        },
+        negotiations: {
+          take: 5,
+          orderBy: { createdAt: 'desc' },
+          include: {
+            shop: { select: { name: true } },
+            product: { select: { name: true } }
+          }
+        },
+        wallet: true,
+        driverProfile: true,
+      },
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const { passwordHash, ...safeUser } = user;
+    return safeUser;
   }
 }
 

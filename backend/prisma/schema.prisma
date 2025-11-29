@@ -132,7 +132,7 @@ model User {
   sentMessages        ChatMessage[]
   notifications       Notification[]
   submittedReports    Report[]         @relation("Reporter")
-  reportsAgainst      Report[]         @relation("ReportedUser")
+
   packages            Package[]
   leaderboard         Leaderboard?
   postedBatches       FreelancingBatch[]
@@ -202,7 +202,7 @@ model Shop {
   promotions          Promotion[]
   packages            Package[]
   wallet              Wallet?
-  reports             Report[]
+
   payoutRequests      PayoutRequest[]
   
   createdAt           DateTime     @default(now())
@@ -295,7 +295,7 @@ model ShopProduct {
   negotiations        Negotiation[]
   reviews             Review[]
   cartItems           CartItem[]
-  reports             Report[]
+
   
   createdAt           DateTime     @default(now())
   updatedAt           DateTime     @updatedAt
@@ -336,7 +336,7 @@ model Review {
   comment             String?
   images              String[]
   
-  reports             Report[]
+
   
   createdAt           DateTime     @default(now())
 }
@@ -564,20 +564,24 @@ model Notification {
   @@index([createdAt])
 }
 
+enum ReportTargetType {
+  USER
+  SHOP
+  PRODUCT
+  REVIEW
+  MESSAGE
+  NEGOTIATION
+}
+
 model Report {
   id                  String       @id @default(uuid())
   
   reporterId          String
   reporter            User         @relation("Reporter", fields: [reporterId], references: [id])
   
-  reportedUserId      String?
-  reportedUser        User?        @relation("ReportedUser", fields: [reportedUserId], references: [id])
-  reportedShopId      String?
-  reportedShop        Shop?        @relation(fields: [reportedShopId], references: [id])
-  reportedProductId   String?
-  reportedProduct     ShopProduct? @relation(fields: [reportedProductId], references: [id])
-  reportedReviewId    String?
-  reportedReview      Review?      @relation(fields: [reportedReviewId], references: [id])
+  targetType          ReportTargetType
+  targetId            String
+  metadata            Json?
   
   reason              ReportReason
   description         String
@@ -593,6 +597,7 @@ model Report {
   
   @@index([status])
   @@index([reporterId])
+  @@index([targetType, targetId])
 }
 
 // ==================== ORDERS & PAYMENTS ====================
