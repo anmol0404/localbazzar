@@ -21,15 +21,18 @@ app.get('/health', (req: Request, res: Response) => {
 });
 
 // API Routes
-import authRoutes from './modules/auth/routes/auth.routes';
-import userRoutes from './modules/users/routes/users.routes';
-import shopRoutes from './modules/shops/routes/shops.routes';
-import productRoutes from './modules/products/routes/products.routes';
-import orderRoutes from './modules/orders/routes/orders.routes';
-import negotiationRoutes from './modules/negotiations/routes/negotiations.routes';
-import driverRoutes from './modules/drivers/routes/drivers.routes';
-import notificationRoutes from './modules/notifications/routes/notifications.routes';
-import subscriptionRoutes from './modules/subscriptions/routes/subscriptions.routes';
+import authRoutes from './routes/auth.routes';
+import userRoutes from './routes/users.routes';
+import shopRoutes from './routes/shops.routes';
+import productRoutes from './routes/products.routes';
+import orderRoutes from './routes/orders.routes';
+import negotiationRoutes from './routes/negotiations.routes';
+import driverRoutes from './routes/drivers.routes';
+import notificationRoutes from './routes/notifications.routes';
+import subscriptionRoutes from './routes/subscriptions.routes';
+import financeRoutes from './routes/finance.routes';
+import uploadRoutes from './routes/upload.routes';
+import path from 'path';
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
@@ -40,6 +43,11 @@ app.use('/api/v1/negotiations', negotiationRoutes);
 app.use('/api/v1/drivers', driverRoutes);
 app.use('/api/v1/notifications', notificationRoutes);
 app.use('/api/v1/subscriptions', subscriptionRoutes);
+app.use('/api/v1/finance', financeRoutes);
+app.use('/api/v1/uploads', uploadRoutes);
+
+// Serve uploaded files
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 app.get('/api/v1', (req: Request, res: Response) => {
   res.json({ 
@@ -55,6 +63,7 @@ app.get('/api/v1', (req: Request, res: Response) => {
       drivers: '/api/v1/drivers',
       notifications: '/api/v1/notifications',
       subscriptions: '/api/v1/subscriptions',
+      finance: '/api/v1/finance',
       docs: '/api/v1/docs (coming soon)'
     }
   });

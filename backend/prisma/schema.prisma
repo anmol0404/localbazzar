@@ -203,6 +203,7 @@ model Shop {
   packages            Package[]
   wallet              Wallet?
   reports             Report[]
+  payoutRequests      PayoutRequest[]
   
   createdAt           DateTime     @default(now())
   updatedAt           DateTime     @updatedAt
@@ -719,4 +720,42 @@ model ChatMessage {
   
   @@index([negotiationId])
   @@index([createdAt])
+}
+
+// ==================== FINANCE ====================
+
+enum PayoutStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  PROCESSED
+}
+
+model PayoutRequest {
+  id                  String       @id @default(uuid())
+  shopId              String
+  shop                Shop         @relation(fields: [shopId], references: [id])
+  
+  amount              Decimal
+  currency            String       @default("INR")
+  status              PayoutStatus @default(PENDING)
+  
+  requestedAt         DateTime     @default(now())
+  processedAt         DateTime?
+  processedBy         String?      // Admin ID
+  
+  transactionId       String?
+  notes               String?
+  
+  @@index([shopId])
+  @@index([status])
+}
+
+model PlatformSettings {
+  id                  String       @id @default(uuid())
+  key                 String       @unique
+  value               Json
+  description         String?
+  
+  updatedAt           DateTime     @updatedAt
 }
