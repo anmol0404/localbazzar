@@ -7,6 +7,8 @@
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
+    "test:ai": "ts-node scripts/test-ai.ts",
+    "test:ai:quick": "ts-node scripts/test-ai-simple.ts",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
@@ -20,6 +22,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@google/genai": "^1.30.0",
     "@prisma/client": "^5.22.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.5",

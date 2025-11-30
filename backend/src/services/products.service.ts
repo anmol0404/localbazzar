@@ -137,6 +137,7 @@ export class ProductService {
   }
 
   // Search products (Basic search for now, Semantic search requires pgvector + OpenAI)
+  // Search products (Basic search)
   async searchProducts(query: string) {
     return await prisma.shopProduct.findMany({
       where: {
